@@ -6,6 +6,8 @@ Module.register("MMM-home-presence", {
       "192.168.178.28": "Guenther",
       "192.168.178.24": "Manfred"
     },
+    notification: "",
+    timer_handle:null,
     interval_ms: 100,
   },
   start: function() {
@@ -23,7 +25,7 @@ Module.register("MMM-home-presence", {
   },
   getDom: function() {
     var table = document.createElement("table");
-
+    let active=0
     for (const key in this.config.IPMap) {
       var row = document.createElement("tr");
       var name = document.createElement("td");
@@ -34,10 +36,17 @@ Module.register("MMM-home-presence", {
       let checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.checked = this.presence[key];
+      active += 1 * this.presence[key]
       checkboxCell.appendChild(checkbox);
       row.appendChild(checkboxCell);
 
       table.appendChild(row);
+    }
+    if (active && this.config.notification !== "" && !this.timer_handle) {
+      setTimeout(() => {        
+        this.sendNotification(this.config.notification, active > 0)
+        this.timer_handle=null
+      },2)
     }
     return table;
   },

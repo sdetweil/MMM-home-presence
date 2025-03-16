@@ -36,6 +36,7 @@ Configure the module in your `config/config.js` file. Example:
       "192.168.178.28": "Guenther",
       "192.168.178.55": "Manfred"
     },
+    notification:"string",  // if string is not "", then this notification true/false will be sent on every status update (default)10 times/second)
     interval_ms: 2000,
   }
 }
