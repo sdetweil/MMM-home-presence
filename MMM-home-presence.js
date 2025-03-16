@@ -7,9 +7,11 @@ Module.register("MMM-home-presence", {
       "192.168.178.24": "Manfred"
     },
     notification: "",
-    timer_handle:null,
     interval_ms: 100,
+    debug: false
   },
+  state: -1, // unknown device state, so will record the 1st time
+  timer_handle: null,
   start: function() {
     // This object keeps track of configurated IP addresses and
     // their reachability. It's updated by the node helper.
@@ -36,15 +38,17 @@ Module.register("MMM-home-presence", {
       let checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.checked = this.presence[key];
-      active += 1 * this.presence[key]
+      active |= 1 * this.presence[key]
+      console.log("active =" + active + " device status=" + this.presence[key])
       checkboxCell.appendChild(checkbox);
       row.appendChild(checkboxCell);
 
       table.appendChild(row);
     }
-    if (active && this.config.notification !== "" && !this.timer_handle) {
+    if (active !== this.state && this.config.notification !== "" && !this.timer_handle) {
+      this.state = active 
       setTimeout(() => {        
-        this.sendNotification(this.config.notification, active > 0)
+        this.sendNotification(this.config.notification, this.state)
         this.timer_handle=null
       },2)
     }
